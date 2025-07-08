@@ -280,12 +280,14 @@ function MockDataStore:SetAsync(key, value, userIds, options)
 	return latestVersion
 end
 
-function MockDataStore:GetAsync(key)
+function MockDataStore:GetAsync(key, options)
 	enforceKeyLimits(key)
 
-	local cachedValue, cachedKeyInfo = getCachedValue(self, key)
-	if cachedValue ~= nil then
-		return cachedValue, cachedKeyInfo
+	if options == nil or options.UseCache == true then
+		local cachedValue, cachedKeyInfo = getCachedValue(self, key)
+		if cachedValue ~= nil then
+			return cachedValue, cachedKeyInfo
+		end
 	end
 
 	doRateLimitAndQueue(self, "GetAsync")
